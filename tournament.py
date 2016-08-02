@@ -6,15 +6,19 @@
 import psycopg2
 
 
-def connect():
+def connect(database_name="tournament"):
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        db = psycopg2.connect("dbname={}".format(database_name))
+        cursor = db.cursor()
+        return db, cursor
+    except:
+        print("Error: could not connect to database")
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
     c.execute("DELETE FROM matches")
     db.commit()
     db.close()
@@ -22,8 +26,7 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
     c.execute("DELETE FROM players")
     db.commit()
     db.close()
@@ -31,8 +34,7 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
     c.execute("SELECT * FROM players")
     players_count = len(c.fetchall())
     db.close()
@@ -48,8 +50,7 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
     c.execute("INSERT INTO players (playerName) Values (%s)", (name,))
     db.commit()
     db.close()
@@ -68,8 +69,7 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    db = connect()
-    c = db.cursor()
+    db, c = connect()
     c.execute("SELECT * FROM standings")
     standings = c.fetchall()
     db.close()
@@ -84,10 +84,8 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    db = connect()
-    c = db.cursor()
-    c.execute("INSERT INTO matches (winner) Values (%s)", (winner,))
-    c.execute("INSERT INTO matches (loser) Values (%s)", (loser,))
+    db, c = connect()
+    c.execute("INSERT INTO matches (winner, loser) VALUES (%s, %s)", (winner, loser))
     db.commit()
     db.close()
 
@@ -120,5 +118,3 @@ def swissPairings():
             if idx % 4 != 0:
                 pairList = []
     return pairings
-
-

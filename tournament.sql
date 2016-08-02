@@ -16,17 +16,16 @@ CREATE DATABASE tournament;
 CREATE TABLE tournaments (
 	tournamentId serial primary key,
 	tournamentName text,
-	playerCount integer
 	);
 
 CREATE TABLE players (
 	playerId serial primary key,
 	playerName text,
-	totalMatches integer
 	);
 
 CREATE TABLE matches (
 	matchId serial primary key,
+	tournamentId integer references tournaments,
 	winner integer references players (playerId),
 	loser integer references players (playerId)
 	);
