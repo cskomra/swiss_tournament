@@ -112,7 +112,6 @@ def swissPairings():
     pairList = []
     pairings = []
     for idx, row in enumerate(standings):
-        # print idx
         pairList.append(row[0])
         pairList.append(row[1])
         if idx % 2 != 0:
