@@ -20,7 +20,7 @@ CREATE TABLE tournaments (
 
 CREATE TABLE players (
 	playerId serial primary key,
-	playerName text,
+	playerName text
 	);
 
 CREATE TABLE matches (
